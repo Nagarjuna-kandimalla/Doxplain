@@ -89,4 +89,4 @@ No major teamwork challenges have arisen. To strengthen collaboration in future 
 
 ### 5. Conclusion  
 
-The pipeline integrates multiple QA models across two datasets in a modular architecture, yielding six total configurations. Results will be benchmarked on accuracy, latency, and SLA compliance once metrics are available. The team’s division of labor and collaborative workflow have supported efficient development, with plans to extend evaluation and deployment in future milestones.  
+The pipeline integrates multiple QA models across two datasets in a modular architecture, yielding 18 total configurations. Results will be benchmarked on accuracy, latency, and SLA compliance once metrics are available. The team’s division of labor and collaborative workflow have supported efficient development, with plans to extend evaluation and deployment in future milestones.  
