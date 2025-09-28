@@ -20,6 +20,7 @@ The pipeline is modular, with distinct components for datasets, embedding models
 - **all-MiniLM-L6-v2**  
 - **all-MiniLM-L12-v2**  
 - **all-mpnet-base-v2**  
+
 These models generate dense vector representations of text passages for storage and retrieval in ChromaDB.  
 
 **Reranking.**  
