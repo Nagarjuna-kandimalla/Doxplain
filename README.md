@@ -16,8 +16,11 @@ The pipeline is modular, with distinct components for datasets, embedding models
 - **QASPER**: Research-paper-based dataset with annotated QA pairs.  
 - **HotpotQA**: Wikipedia-based multi-hop QA dataset.  
 
-**Embedding.**  
-- **all-MiniLM-L6-v2**: Used for chunk-level embeddings to support semantic retrieval via ChromaDB.  
+**Embeddings.**  
+- **all-MiniLM-L6-v2**  
+- **all-MiniLM-L12-v2**  
+- **all-mpnet-base-v2**  
+These models generate dense vector representations of text passages for storage and retrieval in ChromaDB.  
 
 **Reranking.**  
 - **cross-encoder/ms-marco-MiniLM-L-6-v2**: Applied to refine retrieved passages, ensuring higher contextual relevance for downstream QA models.  
@@ -28,35 +31,40 @@ The pipeline is modular, with distinct components for datasets, embedding models
 - **deepset/roberta-base-squad2**  
 
 **Pipeline Configurations.**  
-A configuration is defined as a unique combination of dataset and QA model (embedding and reranker are fixed). This results in:  
+A configuration is defined as a unique combination of dataset, embedding model, and QA model (with a fixed reranker). This results in:  
 
 - 2 datasets  
-- 1 embedding model  
+- 3 embedding models  
 - 1 reranker  
 - 3 QA models  
 
-Total = **6 pipeline configurations**. 
+Total = **18 pipeline configurations**.
 
 ---
 
 ### 3. Results  
 
-Each configuration is evaluated on three criteria:  
+Instead of tabular SLA benchmarks (which remain pending), this milestone focuses on exploratory evaluation using **mean confidence** and **cosine similarity** metrics across model configurations.  
 
-- **Accuracy**: measured as the number of assertions passed.  
-- **Latency**: average per-question response time.  
-- **SLA Met**: whether the configuration satisfies the required service-level agreement.  
+#### 3.1 Mean Confidence vs. Cosine Similarity  
 
-At present, SLA benchmarks have not yet been released; therefore, placeholders are provided for all results.  
+**Image credit: Deshan.** The first figure plots the mean confidence of each QA model against the mean cosine similarity of its outputs. Each point represents a dataset–embedding–generation model configuration. The vertical (red) and horizontal (green) dashed lines mark the global averages for confidence and cosine similarity, respectively. This visualization allows us to quickly identify models that exceed baseline expectations.  
 
-| Dataset   | QA Model                                                   | Accuracy (Assertions) | Latency (s) | SLA Met |
-|-----------|-------------------------------------------------------------|------------------------|-------------|---------|
-| QASPER    | google-bert/bert-large-uncased-whole-word-masking-squad    | TBD                    | TBD         | TBD     |
-| QASPER    | deepset/tinyroberta-squad2                                 | TBD                    | TBD         | TBD     |
-| QASPER    | deepset/roberta-base-squad2                                | TBD                    | TBD         | TBD     |
-| HotpotQA  | google-bert/bert-large-uncased-whole-word-masking-squad    | TBD                    | TBD         | TBD     |
-| HotpotQA  | deepset/tinyroberta-squad2                                 | TBD                    | TBD         | TBD     |
-| HotpotQA  | deepset/roberta-base-squad2                                | TBD                    | TBD         | TBD     |  
+![Mean Confidence vs Cosine Similarity](report_files/milestone_1/mean_confidence_vs_cosine_similarity.png)  
+
+#### 3.2 Mean Cosine Similarity by Model Combination  
+
+**Image credit: Deshan.** The second figure reports mean cosine similarity scores per dataset and model configuration. Configurations are ranked from highest to lowest similarity, and bars are color-coded by dataset (blue = HotpotQA, orange = QASPER). The results suggest that **HotpotQA generally achieves higher cosine similarity scores than QASPER**, with the top-performing configurations combining HotpotQA with `google-bert/bert-large-uncased-whole-word-masking-finetuned-squad`.  
+
+![Mean Cosine Similarity by Model Combination](report_files/milestone_1/mean_cosine_similarity_by_model.png)  
+
+#### 3.3 Observations  
+
+- **Dataset sensitivity:** HotpotQA configurations consistently outperform QASPER in cosine similarity.  
+- **Model performance:** The `google-bert/bert-large-uncased-whole-word-masking-finetuned-squad` model emerges as the strongest QA generator across both datasets.  
+- **Trade-offs:** While confidence and similarity often correlate, some models achieve high confidence without high semantic similarity, highlighting the need for balanced evaluation criteria.  
+
+SLA-based reporting on accuracy, latency, and compliance will be incorporated once benchmarks are published.  
 
 ---
 

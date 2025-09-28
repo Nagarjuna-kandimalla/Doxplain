@@ -17,7 +17,7 @@ RUN pip install --upgrade pip && \
     pip install -r requirements-text.txt && \
     pip install jupyter
 
-COPY README.md .
+COPY README_text.md .
 COPY load_models.ipynb .
 COPY load_dataset.ipynb .
 
