@@ -24,7 +24,9 @@ The pipeline is modular, with distinct components for datasets, embedding models
 These models generate dense vector representations of text passages for storage and retrieval in ChromaDB.  
 
 **Reranking.**  
-- **cross-encoder/ms-marco-MiniLM-L-6-v2**: Applied to refine retrieved passages, ensuring higher contextual relevance for downstream QA models.  
+- **cross-encoder/ms-marco-MiniLM-L-6-v2**
+
+Applied to refine retrieved passages, ensuring higher contextual relevance for downstream QA models.  
 
 **Question Answering Models.**  
 - **google-bert/bert-large-uncased-whole-word-masking-finetuned-squad**  
@@ -32,6 +34,7 @@ These models generate dense vector representations of text passages for storage 
 - **deepset/roberta-base-squad2**  
 
 **Pipeline Configurations.**  
+
 A configuration is defined as a unique combination of dataset, embedding model, and QA model (with a fixed reranker). This results in:  
 
 - 2 datasets  
