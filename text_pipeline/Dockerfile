@@ -1,29 +1,30 @@
-FROM ubuntu:22.04
+# Minimal, modern, CPU-only runner for notebooks via papermill
+FROM python:3.11-slim
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PYTHONDONTWRITEBYTECODE=1
 
+WORKDIR /runner
+
+# OS deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential software-properties-common curl wget git unzip nano vim \
-    python3 python3-pip python3-venv python3-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    build-essential curl ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
-WORKDIR /
+# Install Python deps from repo's file
+# 
+COPY requirements-text.txt /runner/requirements.txt
+RUN pip install --upgrade pip && pip install -r /runner/requirements.txt
 
-COPY requirements-text.txt .
+# Ensure papermill and jupyter are present for notebook execution
+RUN pip install papermill jupyter
 
-# Install Jupyter and dependencies
-RUN pip install --upgrade pip && \
-    pip install -r requirements-text.txt && \
-    pip install jupyter
+# Default command executes the two notebooks found in the *mounted* workspace
+# We do NOT copy notebooks into the image — we run the copies from the host mount,
+# so all outputs (CSVs, plots, executed notebooks) end up on the machine.
+ENV WORKSPACE=/workspace
+WORKDIR ${WORKSPACE}
 
-COPY README_text.md .
-COPY load_models.ipynb .
-COPY load_dataset.ipynb .
-
-
-# Expose Jupyter port
-EXPOSE 8888
-
-# Default command: start Jupyter Notebook
-CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root"]
+CMD bash -lc "papermill ${WORKSPACE}/load_dataset.ipynb ${WORKSPACE}/load_dataset.out.ipynb && \
+              papermill ${WORKSPACE}/load_models.ipynb  ${WORKSPACE}/load_models.out.ipynb"
